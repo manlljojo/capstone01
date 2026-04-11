@@ -76,14 +76,37 @@ class EventController extends Controller
         $request->validate([
             'nama_event' => 'required',
             'kategori' => 'required',
-            'banner' => 'required',
             'deskripsi' => 'required',
             'tanggal' => 'required|date',
             'lokasi' => 'required',
+            'harga' => 'required|numeric',
+            'banner' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $event = \App\Models\Event::findOrFail($id);
-        $event->update($request->all());
+        
+        $data = $request->only([
+            'nama_event',
+            'kategori',
+            'deskripsi',
+            'tanggal',
+            'lokasi',
+            'harga'
+        ]);
+
+        if ($request->hasFile('banner')) {
+            // Hapus file lama jika itu file lokal (opsional, tapi disarankan untuk menghemat storage)
+            // if ($event->banner && !Str::startsWith($event->banner, ['http', 'https'])) {
+            //     \Storage::delete('public/banners/' . $event->banner);
+            // }
+
+            $file = $request->file('banner');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('public/banners', $filename);
+            $data['banner'] = $filename;
+        }
+
+        $event->update($data);
 
         return redirect('/admin')->with('success', 'Event berhasil diupdate!');
     }

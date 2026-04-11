@@ -24,7 +24,11 @@ class AdminController extends Controller
             'password' => 'required',
         ]);
         if(Auth::attempt($validasi)){
-            return redirect('/admin');
+            if(Auth::user()->role === 'admin') {
+                return redirect('/admin');
+            } else {
+                return redirect('/');
+            }
         }
         else{
             return redirect('/login');
@@ -41,29 +45,49 @@ class AdminController extends Controller
     }
 
     public function ubah($id){
-        $peserta=Peserta::find($id);
+        $peserta = Peserta::findOrFail($id);
         return view('edit', compact('peserta'));
     }
     public function ubahput(Request $request, $id){
 
-        $peserta = Peserta::find($id);
+        $peserta = Peserta::findOrFail($id);
 
         $peserta->nama = $request->nama;
         $peserta->alamat = $request->alamat;
         $peserta->nomor_hp = $request->nomor_hp;
     
-        // Simpan perubahan ke database
         $peserta->save();
         return redirect('/admin');
     }
     public function delete($id){
-        Peserta::find($id)->delete();
-        return back();
+        Peserta::findOrFail($id)->delete();
+        return redirect()->back();
     }
     public function daftar(){
-        $peserta = Peserta::all();
+        $peserta = Peserta::with('event')->orderBy('created_at', 'desc')->get();
         return view('daftar', compact('peserta'));
     }
+
+    public function toggleCheckin($id) {
+        $peserta = Peserta::findOrFail($id);
+        
+        // Hanya bisa check-in jika sudah lunas
+        if($peserta->status_pembayaran !== 'Lunas') {
+            return redirect()->back()->with('error', 'Peserta belum melunasi pembayaran!');
+        }
+
+        $peserta->check_in = $peserta->check_in === 'Belum' ? 'Sudah' : 'Belum';
+        $peserta->save();
+        return redirect()->back();
+    }
+
+    public function confirmPayment($id) {
+        $peserta = Peserta::findOrFail($id);
+        $peserta->status_pembayaran = 'Lunas';
+        $peserta->save();
+        return redirect()->back()->with('success', 'Pembayaran berhasil dikonfirmasi!');
+    }
+
     public function checkinview(){
         return view('checkin');
     }
@@ -79,11 +103,11 @@ class AdminController extends Controller
             $peserta->check_in = 'Sudah';
             $peserta->save();
             $request->session()->flash('success', 'Check-in berhasil dilakukan.');
-            return redirect('admin');
+            return redirect('/admin');
             
         }
     } else {
-        return redirect('admin');
+        return redirect('/admin')->with('error', 'Tiket ID tidak ditemukan!');
     }
     }
 }

@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('peserta', function (Blueprint $table) {
+            $table->string('metode_pembayaran')->nullable()->after('event_id');
+            $table->string('status_pembayaran')->default('Pending')->after('metode_pembayaran');
+            $table->integer('total_bayar')->default(0)->after('status_pembayaran');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('peserta', function (Blueprint $table) {
+            $table->dropColumn(['metode_pembayaran', 'status_pembayaran', 'total_bayar']);
+        });
+    }
+};

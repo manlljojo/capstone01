@@ -15,8 +15,13 @@ use App\Http\Controllers\EventController;
 # HALAMAN USER
 # ======================
 Route::get('/', [PesertaController::class, 'index']);
-Route::get('/tiket', [PesertaController::class, 'tiket']);
-Route::post('/tiket', [PesertaController::class, 'kirim']);
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/tiket/{id}', [PesertaController::class, 'tiket']);
+    Route::post('/tiket/{id}', [PesertaController::class, 'kirim']);
+    Route::get('/riwayat', [PesertaController::class, 'riwayat']);
+    Route::get('/bayar/{id}', [PesertaController::class, 'bayar']);
+});
 
 # ======================
 # AUTH
@@ -41,6 +46,8 @@ Route::middleware(['auth'])->group(function () {
 
     # Check-in
     Route::post('/checkin', [AdminController::class, 'checkin']);
+    Route::post('/admin/checkin/{id}', [AdminController::class, 'toggleCheckin']);
+    Route::post('/admin/confirm-payment/{id}', [AdminController::class, 'confirmPayment']);
 
     # CRUD Event (INI PENTING 🔥)
     Route::resource('events', EventController::class);

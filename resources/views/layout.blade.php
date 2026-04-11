@@ -28,6 +28,20 @@
 
     <!-- Template Stylesheet -->
     <link href="{{asset('css/style.css')}}" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #512da8; /* Smoother deep purple */
+        }
+        @if(Request::is('/'))
+        .hero-header { margin-bottom: 0 !important; }
+        .footer { margin-top: 0 !important; }
+        @endif
+        .bg-primary { background-color: var(--primary) !important; }
+        .hero-header { 
+            background-color: var(--primary) !important;
+            padding-bottom: 10rem !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -42,48 +56,66 @@
 
 
         <!-- Navbar & Hero Start -->
-        <div class="container-xxl position-relative p-0">
+        <div class="container-xxl position-relative p-0" style="background-color: var(--primary);">
             <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-                
-                <a href="" class="navbar-brand p-0">
+                <a href="/" class="navbar-brand p-0">
                     <h1 class="m-0">Tiket</h1>
-                    <!-- <img src="img/logo.png" alt="Logo"> -->
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                     <span class="fa fa-bars"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <div class="navbar-nav mx-auto py-0">
+                    <div class="navbar-nav ms-auto py-0">
                         @if(Auth::check())
-                        <a href="/admin" class="nav-item nav-link">Halaman Admin</a>
-                        <a href="/daftar" class="nav-item nav-link">Laporan Daftar Penonton</a>
-                        <a href="/logout" class="nav-item nav-link">Logout</a>
+                            @if(Auth::user()->role == 'admin')
+                                <a href="/admin" class="nav-item nav-link">Halaman Admin</a>
+                                <a href="/daftar" class="nav-item nav-link">Laporan Penonton</a>
+                            @else
+                                <a href="/" class="nav-item nav-link">Home</a>
+                                <a href="/riwayat" class="nav-item nav-link">Tiket Saya</a>
+                            @endif
+                            <a href="#about-section" class="nav-item nav-link">Tentang</a>
+                            <a href="/logout" class="nav-item nav-link text-danger">Logout</a>
                         @else
-                        <a href="/" class="nav-item nav-link">Home</a>
-                        <a href="/tiket#down" class="nav-item nav-link">Tiket</a>
-                        <a href="/login#down" class="nav-item nav-link">Login</a>
+                            <a href="/" class="nav-item nav-link">Home</a>
+                            <a href="#about-section" class="nav-item nav-link">Tentang</a>
+                            <a href="" class="nav-item nav-link">Bantuan</a>
+                            <a href="/login#down" class="nav-item nav-link">Login</a>
                         @endif
-                        </div>
                     </div>
                 </div>
             </nav>
 
-            <div class="container-xxl bg-primary hero-header">
+            @if(Request::is('/'))
+            <div class="container-xxl bg-primary hero-header" style="padding: 10rem 0 5rem 0; margin-bottom: 0;">
                 <div class="container px-lg-5">
-                        @if (session('success'))
-                            <div class="alert alert-success">
-                                Sudah Masuk
-                            </div>
-                        @endif
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show rounded-4" role="alert">
+                            <i class="fa fa-check-circle me-2"></i> {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
                     <div class="row g-5 align-items-end">
                         <div class="col-lg-6 text-center text-lg-start">
                             @if(Auth::check())
-                            <h1 class="text-white mb-4 animated slideInDown">Halaman Admin.</h1>
-                            <p class="text-white pb-3 animated slideInDown">Pesan Tiket Anda Disini.</p>
+                                @if(Auth::user()->role == 'admin')
+                                    <h1 class="text-white mb-4 animated slideInDown">Selamat Datang di Pusat Kendali</h1>
+                                    <p class="text-white pb-3 animated slideInDown">Kelola distribusi, harga, dan validasi tiket konser dalam satu panel terpadu dengan mudah.</p>
+                                @else
+                                    <h1 class="text-white mb-4 animated slideInDown">Selamat Datang Kembali</h1>
+                                    <p class="text-white pb-3 animated slideInDown">Senang melihat Anda kembali. Mari siapkan diri Anda untuk malam penuh kenangan bersama Payung Teduh.</p>
+                                    <a href="#jadwalGrid" id="btnPesanTiket" class="btn py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft shadow" style="background-color: #ff9800; color: #000; font-weight: 700;">Dapatkan Tiket Sekarang</a>
+                                @endif
                             @else
-                            <h1 class="text-white mb-4 animated slideInDown">Portal Pemesanan Tiket</h1>
-                            <p class="text-white pb-3 animated slideInDown">Pesan Tiket Konser Slipknot Lewat Layanan Online Ini.</p>
-                            <a href="/tiket#down" class="btn btn-secondary py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft">Pesan Tiket</a>
+                                @if(request('intent') == 'order')
+                                    <h1 class="text-white mb-4 animated headShake">Langkah Sedikit Lagi!</h1>
+                                    <p class="text-white pb-3 animated fadeIn">Untuk memproses pesanan tiket konser Payung Teduh, silakan masuk ke akun Anda terlebih dahulu agar data tiket tersimpan dengan aman.</p>
+                                    <a href="/login?intent=order" class="btn py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft shadow" style="background-color: #ff9800; color: #000; font-weight: 700;">Masuk untuk Melanjutkan</a>
+                                @else
+                                    <h1 class="text-white mb-4 animated slideInDown">Selamat Datang di TeduhTicket</h1>
+                                    <p class="text-white pb-3 animated slideInDown">Mari larut dalam syahdu nada dan kedalaman makna. Mulai langkah Anda untuk menyaksikan pertunjukan kami secara langsung.</p>
+                                    <a href="/login?intent=order" class="btn py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft shadow" style="background-color: #ff9800; color: #000; font-weight: 700;">Masuk untuk Lihat Jadwal</a>
+                                @endif
                             @endif
                         </div>
                         <div class="col-lg-6 text-center text-lg-start">
@@ -92,13 +124,23 @@
                     </div>
                 </div>
             </div>
+            @else
+                {{-- Spacer for pages without hero to prevent navbar overlap --}}
+                <div style="height: 100px;"></div>
+            @endif
         </div>
         <!-- Navbar & Hero End -->
-        <div class="container-xxl py-5">
-            <div class="container py-5 px-lg-5" id="down">
+        @if(Request::is('/'))
+            <div id="down">
                 @yield('content')
             </div>
-        </div>
+        @else
+            <div class="container-xxl py-5">
+                <div class="container py-5 px-lg-5" id="down">
+                    @yield('content')
+                </div>
+            </div>
+        @endif
 
         <div class="container-fluid bg-primary text-light footer wow fadeIn" data-wow-delay="0.1s">
             <div class="container px-lg-5">
@@ -143,6 +185,27 @@
     <!-- Template Javascript -->
     <script src="{{asset('js/main.js')}}"></script>
     <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var btn = document.getElementById('btnPesanTiket');
+        if(btn) {
+            btn.addEventListener('click', function(e) {
+                var grid = document.getElementById('jadwalGrid');
+                if(grid) {
+                    // Jika grid tersembunyi, tampilkan dulu (untuk guests yang mungkin dialihkan tapi tetap di home)
+                    if(grid.classList.contains('d-none')) {
+                        grid.classList.remove('d-none');
+                        grid.style.opacity = 0;
+                        setTimeout(function(){ 
+                            grid.style.transition = "opacity 0.8s ease-in-out"; 
+                            grid.style.opacity = 1; 
+                        }, 50);
+                    }
+                    grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        }
+    });
+
     function redirectToEdit(id) {
         window.location.href = "/edit/" + id;
     }

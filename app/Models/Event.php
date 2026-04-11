@@ -15,6 +15,7 @@ class Event extends Model
     'deskripsi',
     'tanggal',
     'lokasi',
+    'harga',
     'banner'
 ];
 }
