@@ -21,6 +21,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tiket/{id}', [PesertaController::class, 'kirim']);
     Route::get('/riwayat', [PesertaController::class, 'riwayat']);
     Route::get('/bayar/{id}', [PesertaController::class, 'bayar']);
+    Route::delete('/peserta/batal/{id}', [PesertaController::class, 'batal'])->name('peserta.batal');
+    Route::get('/cetak-tiket/{id}', [PesertaController::class, 'cetak'])->name('cetak_tiket');
 });
 
 # ======================

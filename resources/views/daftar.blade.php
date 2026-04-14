@@ -4,9 +4,19 @@
 <div class="row animate__animated animate__fadeInUp">
     <div class="col-md-12">
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-            <div class="card-header bg-white border-bottom-0 py-4 px-4">
-                <h4 class="fw-bold m-0 text-dark"><i class="fa fa-users me-2" style="color:#ff9800;"></i> Laporan Daftar Penonton</h4>
-                <p class="text-muted small m-0 mt-1">Gunakan tombol verifikasi untuk melangsungkan check-in peserta secara real-time di gerbang masuk.</p>
+            <div class="card-header bg-white border-bottom-0 py-4 px-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="fw-bold m-0 text-dark"><i class="fa fa-users me-2" style="color:var(--primary);"></i> Laporan Peserta</h4>
+                    <p class="text-muted small m-0 mt-1">Gunakan tombol verifikasi untuk check-in peserta secara real-time.</p>
+                </div>
+                <!-- Search Form -->
+                <form action="/daftar" method="GET" class="d-flex gap-2">
+                    <input type="text" name="search" class="form-control form-control-sm rounded-pill px-3" placeholder="Nama atau ID Tiket..." value="{{ request('search') }}" style="width: 250px;">
+                    <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3">Cari</button>
+                    @if(request('search'))
+                        <a href="/daftar" class="btn btn-sm btn-outline-secondary rounded-pill px-3">Reset</a>
+                    @endif
+                </form>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

@@ -31,15 +31,69 @@
     <style>
         :root {
             --primary: #512da8; /* Smoother deep purple */
+            --secondary: #673ab7;
+            --accent: #ff9800; /* Original Orange/Amber */
+            --dark: #1a1a2e;
+            --glass: rgba(255, 255, 255, 0.1);
         }
+        
+        body {
+            font-family: 'Jost', sans-serif;
+            scroll-behavior: smooth;
+        }
+
         @if(Request::is('/'))
         .hero-header { margin-bottom: 0 !important; }
         .footer { margin-top: 0 !important; }
         @endif
+        
         .bg-primary { background-color: var(--primary) !important; }
+        .text-primary { color: var(--primary) !important; }
+        .btn-primary { 
+            background-color: var(--primary); 
+            border-color: var(--primary); 
+            color: white;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(81, 45, 168, 0.3);
+        }
+        
+        .btn-outline-primary { 
+            color: var(--primary); 
+            border-color: var(--primary); 
+            transition: all 0.3s ease;
+        }
+        .btn-outline-primary:hover { 
+            background-color: var(--primary); 
+            color: white; 
+            transform: scale(1.05);
+        }
+        
+        .navbar {
+            backdrop-filter: blur(15px);
+            background: rgba(26, 26, 46, 0.8) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
         .hero-header { 
-            background-color: var(--primary) !important;
-            padding-bottom: 10rem !important;
+            background: radial-gradient(circle at top right, #673ab7, #512da8) !important;
+            padding-bottom: 12rem !important;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-header::after {
+            content: "";
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: var(--light);
+            transform: skewY(-2deg);
         }
     </style>
 </head>
@@ -59,7 +113,7 @@
         <div class="container-xxl position-relative p-0" style="background-color: var(--primary);">
             <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
                 <a href="/" class="navbar-brand p-0">
-                    <h1 class="m-0">Tiket</h1>
+                    <h1 class="m-0 text-white"><i class="fa fa-microphone-alt me-3"></i>Konser Kita</h1>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                     <span class="fa fa-bars"></span>
@@ -101,21 +155,21 @@
                                 @if(Auth::user()->role == 'admin')
                                     <h1 class="text-white mb-4 animated slideInDown">Selamat Datang di Pusat Kendali</h1>
                                     <p class="text-white pb-3 animated slideInDown">Kelola distribusi, harga, dan validasi tiket konser dalam satu panel terpadu dengan mudah.</p>
-                                @else
-                                    <h1 class="text-white mb-4 animated slideInDown">Selamat Datang Kembali</h1>
-                                    <p class="text-white pb-3 animated slideInDown">Senang melihat Anda kembali. Mari siapkan diri Anda untuk malam penuh kenangan bersama Payung Teduh.</p>
-                                    <a href="#jadwalGrid" id="btnPesanTiket" class="btn py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft shadow" style="background-color: #ff9800; color: #000; font-weight: 700;">Dapatkan Tiket Sekarang</a>
-                                @endif
+                                 @else
+                                     <h1 class="text-white mb-4 animated slideInDown">Selamat Datang Kembali</h1>
+                                     <p class="text-white pb-3 animated slideInDown">Senang melihat Anda kembali. Mari siapkan diri Anda untuk malam penuh kenangan bersama artis favorit Anda.</p>
+                                     <a href="#jadwalGrid" id="btnPesanTiket" class="btn py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft shadow" style="background-color: var(--accent); color: #000; font-weight: 700;">Jelajahi Konser</a>
+                                 @endif
                             @else
-                                @if(request('intent') == 'order')
-                                    <h1 class="text-white mb-4 animated headShake">Langkah Sedikit Lagi!</h1>
-                                    <p class="text-white pb-3 animated fadeIn">Untuk memproses pesanan tiket konser Payung Teduh, silakan masuk ke akun Anda terlebih dahulu agar data tiket tersimpan dengan aman.</p>
-                                    <a href="/login?intent=order" class="btn py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft shadow" style="background-color: #ff9800; color: #000; font-weight: 700;">Masuk untuk Melanjutkan</a>
-                                @else
-                                    <h1 class="text-white mb-4 animated slideInDown">Selamat Datang di TeduhTicket</h1>
-                                    <p class="text-white pb-3 animated slideInDown">Mari larut dalam syahdu nada dan kedalaman makna. Mulai langkah Anda untuk menyaksikan pertunjukan kami secara langsung.</p>
-                                    <a href="/login?intent=order" class="btn py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft shadow" style="background-color: #ff9800; color: #000; font-weight: 700;">Masuk untuk Lihat Jadwal</a>
-                                @endif
+                                 @if(request('intent') == 'order')
+                                     <h1 class="text-white mb-4 animated headShake">Langkah Sedikit Lagi!</h1>
+                                     <p class="text-white pb-3 animated fadeIn">Untuk memproses pesanan tiket konser, silakan masuk ke akun Anda terlebih dahulu agar data tiket tersimpan dengan aman.</p>
+                                     <a href="/login?intent=order" class="btn py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft shadow" style="background-color: var(--accent); color: #000; font-weight: 700;">Masuk untuk Melanjutkan</a>
+                                 @else
+                                     <h1 class="text-white mb-4 animated slideInDown">Selamat Datang di Konser Kita</h1>
+                                     <p class="text-white pb-3 animated slideInDown">Temukan tiket konser dari musisi-musisi terbaik tanah air. Mulai langkah Anda untuk menyaksikan pertunjukan favorit secara langsung.</p>
+                                     <a href="/login?intent=order" class="btn py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft shadow" style="background-color: var(--accent); color: #000; font-weight: 700;">Cari Jadwal Konser</a>
+                                 @endif
                             @endif
                         </div>
                         <div class="col-lg-6 text-center text-lg-start">

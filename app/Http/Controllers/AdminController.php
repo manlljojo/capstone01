@@ -63,8 +63,19 @@ class AdminController extends Controller
         Peserta::findOrFail($id)->delete();
         return redirect()->back();
     }
-    public function daftar(){
-        $peserta = Peserta::with('event')->orderBy('created_at', 'desc')->get();
+    public function daftar(Request $request){
+        $query = $request->input('search');
+        
+        $peserta = Peserta::with('event')->orderBy('created_at', 'desc');
+
+        if($query) {
+            $peserta->where(function($q) use ($query) {
+                $q->where('nama', 'like', "%$query%")
+                  ->orWhere('tiket_id', 'like', "%$query%");
+            });
+        }
+
+        $peserta = $peserta->get();
         return view('daftar', compact('peserta'));
     }
 

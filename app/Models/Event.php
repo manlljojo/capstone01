@@ -16,6 +16,11 @@ class Event extends Model
     'tanggal',
     'lokasi',
     'harga',
-    'banner'
+    'banner',
+    'kuota',
+    'kapasitas',
+    'jam_operasional',
+    'durasi',
+    'faktor_pembatas'
 ];
 }

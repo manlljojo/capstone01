@@ -1,59 +1,92 @@
 @extends('layout')
 @section('title','Riwayat Transaksi')
 @section('content')
-<div class="row justify-content-center mt-4">
-    <div class="col-lg-10">
-        <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 1.2rem;">
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-lg-11">
+        
+        @if(session('success'))
+            <div class="alert alert-success rounded-pill px-4 shadow-sm mb-4 animate__animated animate__fadeInDown">
+                <i class="fa fa-check-circle me-2"></i> {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger rounded-pill px-4 shadow-sm mb-4 animate__animated animate__fadeInDown">
+                <i class="fa fa-exclamation-circle me-2"></i> {{ session('error') }}
+            </div>
+        @endif
+
+        <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 1.5rem;">
             <div class="card-header bg-white border-0 py-4 text-center pb-2">
-                <h3 class="fw-bold m-0"><i class="fa fa-history me-2" style="color: #ff9800;"></i> Riwayat Pembelian Tiket</h3>
+                <h3 class="fw-bold m-0"><i class="fa fa-history me-2" style="color: var(--primary);"></i> Riwayat Pembelian Tiket</h3>
+                <p class="text-muted small">Kelola pesanan dan cetak tiket elektronik Anda di sini.</p>
             </div>
             <div class="card-body p-0">
                 @if($pesertas->isEmpty())
                     <div class="text-center py-5">
-                        <i class="fa fa-box-open fa-3x text-muted mb-3 opacity-50"></i>
+                        <img src="https://cdni.iconscout.com/illustration/premium/thumb/empty-cart-illustration-download-in-svg-png-gif-formats--shopping-ecommerce-pack-illustrations-3336581.png" style="width: 250px;" class="mb-4 opacity-50">
                         <h5 class="text-muted">Anda belum memiliki riwayat pembelian tiket.</h5>
-                        <p><a href="/" class="btn text-dark fw-bold rounded-pill px-5 py-3 mt-4 shadow-sm" style="background-color: #ff9800;">Cari Tiket Sekarang</a></p>
+                        <p><a href="/#jadwalGrid" class="btn btn-primary fw-bold rounded-pill px-5 py-3 mt-4 shadow-sm">Cari Konser Seru</a></p>
                     </div>
                 @else
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+                        <table class="table align-middle mb-0">
+                            <thead class="bg-light">
                                 <tr>
-                                    <th class="ps-4 py-3 border-0 text-muted small">INFO TIKET</th>
-                                    <th class="py-3 border-0 text-muted small">DETAIL KONSER</th>
-                                    <th class="py-3 border-0 text-muted small">TOTAL / METODE</th>
-                                    <th class="py-3 border-0 text-muted small text-center">PEMBAYARAN</th>
-                                    <th class="py-3 border-0 text-muted small text-center">CHECK-IN</th>
+                                    <th class="ps-4 py-3 border-0 text-muted small">ID TIKET</th>
+                                    <th class="py-3 border-0 text-muted small">NAMA KONSER</th>
+                                    <th class="py-3 border-0 text-muted small text-center">STATUS BAYAR</th>
+                                    <th class="py-3 border-0 text-muted small text-center">OPSI / AKSI</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($pesertas as $trx)
-                                <tr>
-                                    <td class="ps-4 border-bottom-0 py-3">
-                                        <strong class="text-primary" style="font-size:1.1rem;">#{{ $trx->tiket_id }}</strong><br>
-                                        <small class="text-muted"><i class="fa fa-user me-1"></i> {{ $trx->nama }}</small>
+                                <tr class="border-bottom">
+                                    <td class="ps-4 py-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-light rounded-3 p-3 text-center me-3" style="min-width: 60px;">
+                                                <i class="fa fa-ticket-alt text-primary fa-lg"></i>
+                                            </div>
+                                            <div>
+                                                <strong class="text-dark d-block">#{{ $trx->tiket_id }}</strong>
+                                                <small class="text-muted">{{ $trx->created_at->format('d M Y, H:i') }}</small>
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td class="border-bottom-0 fw-bold">
-                                        {{ $trx->event->nama_event ?? '-' }} <br>
-                                        <small class="text-muted fw-normal"><i class="fa fa-map-marker-alt me-1 text-warning"></i> {{ $trx->event->lokasi ?? '-' }}</small>
+                                    <td>
+                                        <span class="fw-bold text-dark d-block text-truncate" style="max-width: 250px;">{{ $trx->event->nama_event ?? '-' }}</span>
+                                        <small class="text-muted"><i class="fa fa-map-marker-alt me-1 text-danger"></i> {{ $trx->event->lokasi ?? '-' }}</small>
                                     </td>
-                                    <td class="border-bottom-0">
-                                        <span class="fw-bold text-dark">Rp {{ number_format($trx->total_bayar, 0, ',', '.') }}</span> <br>
-                                        <small class="badge bg-light text-muted border">{{ $trx->metode_pembayaran ?? '-' }}</small>
-                                    </td>
-                                    <td class="border-bottom-0 text-center">
+                                    <td class="text-center">
                                         @if($trx->status_pembayaran == 'Pending')
-                                            <span class="badge bg-danger rounded-pill px-3 py-2 mb-1">Menunggu</span> <br>
-                                            <a href="/bayar/{{ $trx->id }}" class="small text-primary fw-bold text-decoration-none"><i class="fa fa-info-circle me-1"></i> Cara Bayar</a>
+                                            <span class="badge bg-warning rounded-pill px-3 py-2 text-dark"><i class="fa fa-clock me-1"></i> Menunggu</span>
                                         @else
-                                            <span class="badge bg-success rounded-pill px-3 py-2"><i class="fa fa-check-circle me-1"></i> Lunas</span>
+                                            <span class="badge bg-success rounded-pill px-3 py-2 text-white"><i class="fa fa-check-circle me-1"></i> Lunas</span>
                                         @endif
                                     </td>
-                                    <td class="border-bottom-0 text-center">
-                                        @if($trx->check_in == 'Belum')
-                                            <span class="badge bg-light text-muted border rounded-pill px-3 py-2">Belum</span>
+                                    <td class="text-center px-4">
+                                        @if($trx->status_pembayaran == 'Pending')
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a href="/bayar/{{ $trx->id }}" class="btn btn-sm btn-primary rounded-pill px-3">
+                                                    Bayar <i class="fa fa-chevron-right ms-1"></i>
+                                                </a>
+                                                <form action="{{ route('peserta.batal', $trx->id) }}" method="POST" class="m-0 d-inline-block">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini? Pesanan akan dihapus permanen.')">
+                                                        <i class="fa fa-trash"></i> Batal
+                                                    </button>
+                                                </form>
+                                            </div>
                                         @else
-                                            <span class="badge bg-primary rounded-pill px-3 py-2 text-white"><i class="fa fa-walking me-1"></i> Masuk</span>
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a href="/cetak-tiket/{{ $trx->id }}" target="_blank" class="btn btn-sm btn-success rounded-pill px-4">
+                                                    <i class="fa fa-print me-1"></i> Cetak Tiket
+                                                </a>
+                                                @if($trx->check_in == 'Sudah')
+                                                    <span class="badge bg-primary rounded-pill px-3 py-2"><i class="fa fa-walking me-1"></i> Sudah Masuk</span>
+                                                @endif
+                                            </div>
                                         @endif
                                     </td>
                                 </tr>
@@ -62,6 +95,9 @@
                         </table>
                     </div>
                 @endif
+            </div>
+            <div class="card-footer bg-light border-0 py-3 text-center">
+                <p class="mb-0 text-muted small">Menemukan Kendala? <a href="#" class="text-primary fw-bold text-decoration-none">Hubungi Support</a></p>
             </div>
         </div>
     </div>

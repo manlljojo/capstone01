@@ -11,9 +11,9 @@
                 <div style="position: absolute; bottom: 30px; left: 30px;">
                     <h2 class="text-white fw-bold mb-1">{{ $event->nama_event }}</h2>
                     <p class="text-white-50 mb-0">
-                        <i class="fa fa-map-marker-alt me-2 text-warning"></i>{{ $event->lokasi }} 
+                        <i class="fa fa-map-marker-alt me-2 text-rose"></i>{{ $event->lokasi }} 
                         <span class="mx-2">|</span>
-                        <i class="fa fa-calendar-alt me-2 text-warning"></i>{{ \Carbon\Carbon::parse($event->tanggal)->format('d F Y') }}
+                        <i class="fa fa-calendar-alt me-2 text-rose"></i>{{ \Carbon\Carbon::parse($event->tanggal)->format('d F Y') }}
                     </p>
                 </div>
             </div>
@@ -41,25 +41,25 @@
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">PILIH METODE PEMBAYARAN</label>
                                 <div class="row g-2">
-                                    <div class="col-6">
-                                        <input type="radio" class="btn-check" name="metode_pembayaran" id="p_bca" value="BCA" checked autocomplete="off">
-                                        <label class="btn btn-outline-warning w-100 rounded-4 py-3 border-2" for="p_bca">
-                                            <i class="fa fa-university d-block mb-1"></i> BCA
-                                        </label>
-                                    </div>
-                                    <div class="col-6">
-                                        <input type="radio" class="btn-check" name="metode_pembayaran" id="p_qris" value="QRIS" autocomplete="off">
-                                        <label class="btn btn-outline-warning w-100 rounded-4 py-3 border-2" for="p_qris">
-                                            <i class="fa fa-qrcode d-block mb-1"></i> QRIS
-                                        </label>
-                                    </div>
+                                     <div class="col-6">
+                                         <input type="radio" class="btn-check" name="metode_pembayaran" id="p_bca" value="BCA" checked autocomplete="off">
+                                         <label class="btn btn-outline-primary w-100 rounded-4 py-3 border-2" for="p_bca">
+                                             <i class="fa fa-university d-block mb-1"></i> BCA
+                                         </label>
+                                     </div>
+                                     <div class="col-6">
+                                         <input type="radio" class="btn-check" name="metode_pembayaran" id="p_qris" value="QRIS" autocomplete="off">
+                                         <label class="btn btn-outline-primary w-100 rounded-4 py-3 border-2" for="p_qris">
+                                             <i class="fa fa-qrcode d-block mb-1"></i> QRIS
+                                         </label>
+                                     </div>
                                 </div>
                             </div>
                             
                             <input type="hidden" name="total_bayar" value="{{ $event->harga }}">
-                            <button type="submit" class="btn w-100 rounded-pill py-3 fw-bold text-dark border-0 shadow" style="background-color: #ff9800; font-size: 1.1rem;">
-                                Proses ke Pembayaran <i class="fa fa-arrow-right ms-2"></i>
-                            </button>
+                             <button type="submit" class="btn w-100 rounded-pill py-3 fw-bold text-dark border-0 shadow" style="background-color: var(--accent); font-size: 1.1rem;">
+                                 Proses ke Pembayaran <i class="fa fa-arrow-right ms-2"></i>
+                             </button>
                         </form>
                     </div>
 

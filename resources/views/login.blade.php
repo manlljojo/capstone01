@@ -31,7 +31,7 @@
                     <label class="form-label text-muted fw-bold small">PASSWORD</label>
                     <input class="form-control rounded-pill px-4" style="border: 2px solid #eee; height: 50px;" type="password" placeholder="********" name="password" required>
                 </div>
-                <button type="submit" class="btn w-100 rounded-pill py-3 fw-bold text-dark border-0 shadow-sm" style="background-color: #ff9800;">
+                <button type="submit" class="btn w-100 rounded-pill py-3 fw-bold text-dark border-0 shadow-sm" style="background-color: var(--accent);">
                     {{ request('intent') == 'order' ? 'Lanjutkan Pemesanan' : 'Masuk ke Dashboard' }} 
                     <i class="fa {{ request('intent') == 'order' ? 'fa-arrow-right' : 'fa-sign-in-alt' }} ms-2"></i>
                 </button>
